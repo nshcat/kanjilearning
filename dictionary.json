@@ -5,34 +5,120 @@
 	["四", ["four"], ["よ", "よ.つ"], ["シ"]],
 	["五", ["five"], ["いつ"], ["ゴ"]],
 	
-	["本", ["book", "origin", "present", "counter (long cylindrical things)"], ["もと"], ["ホン"]],
-	["日", ["day", "sun", "counter (days)"], ["ニチ", "ジツ"], ["ひ", "-び", "-か"]],
-	["国", ["country"], ["くに"], ["コク"]],
-	["人", ["person"], ["ひと", "-り", "-と"], ["ジン", "ニン"]],
-	["大", ["large", "big"], ["おお.きい"], ["ダイ", "タイ"]],
-	["年", ["year", "counter (years)"], ["とし"], ["ネン"]],
-	["中", ["in", "inside", "center"], ["なか", " あた.る"], ["チュウ"]],
-	["点", ["spot", "point", "counter (score, points)"], [], ["テン"]],
-	["火", ["fire", "flame"], ["ひ", "-び", "ほ-"], ["カ"]],
-	["焚", ["burn"], ["た.く", "や.く"], ["フン", "ホン", "ハン"]],	
-	["出", ["exit", "leave", "come out", "protrude"], ["で.る", "だ.す"], ["シュツ"],
+	["本", ["book", "origin", "present", "counter (long cylindrical things)"], ["もと"], ["ホン"],
 		[
-			["で.る", ["to leave", "to exit", "to come out"]],
-			["だ.す", ["to take out", "to reveal", "to turn in"]]
+			["本", "ホン", ["book", "present", "counter (long cylindrical things)"]],
+			["元 ", "もと", ["origin", "source", "beginning", "foundation", "root"]]
 		]
 	],
-	["長", ["long", "leader", "senior"], ["なが.い"], ["チョウ"]],
+	["日", ["day", "sun", "counter (days)"], ["ニチ", "ジツ"], ["ひ", "-び", "-か"],
+		[
+			["日", "ニチ", ["sunday", "nth day (of month)", "counter (days)"]],
+			["日", "ひ", ["day", "sun", "sunshine", "date"]]
+		]
+	],
+	["国", ["country"], ["くに"], ["コク"],
+		[
+			["国", "くに", ["country", "state", "region"]],
+			["異国", "イコク", ["foreign country"]],
+			["お国", "おくに", ["home country", "home town"]]		
+		]
+	],
+	["人", ["person"], ["ひと", "-り", "-と"], ["ジン", "ニン"],
+		[
+			["人", "ひと", ["person", "mankind", "personality"]],
+			["人", "ニン", ["counter (people)"]],
+			["人", "ジン", ["suffix for nationality"]]
+		]
+	],
+	["大", ["large", "big"], ["おお.きい"], ["ダイ"],
+		[
+			["大", "ダイ", ["great", "huge", "vast", "important", "serious"]],
+			["大きい", "おお.きい", ["big", "large", "loud", "spacious", "important"]]
+		]
+	],
+	["年", ["year", "counter (years)"], ["とし"], ["ネン"],
+		[
+			["年", "ネン", ["year", "counter (years)"]],
+			["年", "とし", ["year", "age", "old age"]]
+		]
+	],
+	["中", ["in", "inside", "center"], ["なか"], ["チュウ"],
+		[
+			["チュウ", ["medium (size)", "middle", "within"]],
+			["なか", ["inside", "interior", "within", "middle", "during", "center"]]
+		]
+	],
+	["点", ["spot", "point", "counter (score, points)"], ["つ.ける", "つ.く"], ["テン"],
+		[
+			["点", "テン", ["counter (score, points)", "dot", "spot", "point", "score"]],
+			["点く", "つ.く", ["to be lit (lamp, burner)", "to catch fire", "to ignite"]],
+			["点ける", "つ.ける", ["to turn on", "to switch on", "to light up"]]		
+		]
+	],
+	["火", ["fire", "flame", "tuesday"], ["ひ", "-び", "ほ-"], ["カ"],
+		[
+			["火", "カ", ["tuesday", "fire (element)"]],
+			["火", "ひ", ["fire", "flame", "blaze"]]
+		]
+	],
+	["焚", ["burn"], ["た.く", "や.く"], ["フン", "ホン", "ハン"],
+		[
+			["焚く", "た.く", ["to burn", "to kindle", "to light (a fire)"]],
+			["焚く", "や.く", ["to burn (food)", "to roast", "to grill", "to broil"]]
+		]
+	],	
+	["出", ["exit", "leave", "come out", "protrude"], ["で.る", "だ.す"], ["シュツ"],
+		[
+			["出る", "で.る", ["to leave", "to exit", "to come out"]],
+			["出す", "だ.す", ["to take out", "to reveal", "to turn in"]]
+		]
+	],
+	["長", ["long", "leader", "senior"], ["なが.い"], ["チョウ"],
+		[
+			["長", "チョウ", ["chief", "leader", "elder"]],
+			["長", "なが.い", ["long (time, length)", "prolonged"]]
+		]
+	],
 	
 	["見", ["see", "hopes", "idea", "look at", "visible"], ["み.る", "み.える", "み.せる"], ["ケン"],
 		[
-			["み.る", ["to see", "to look", "to watch"]],
-			["み.せる", ["to show"]],
-			["み.える", ["to be seen", "to be visible", "to seem"]],
-			["み.せる", ["to show"]],
-			["み.える", ["to be seen", "to be visible", "to seem"]]
+			["見る", "み.る", ["to see", "to look", "to watch"]],
+			["見せる", "み.せる", ["to show"]],
+			["見える", "み.える", ["to be seen", "to be visible", "to seem"]]
 		]
 	],
 	
+	["行", ["going", "journey", "carry out", "act", "line"], ["い.く"], ["コウ", "ギョウ"],
+		[
+			["行", "コウ", ["going", "journey", "trip", "action"]],
+			["行く", "い.く", ["to go", "to move/head (towards)", "to walk along"]],
+			["行", "ギョウ", ["line (text)", "row"]]
+		]
+	],
+	
+	["時", ["time", "hour"], ["とき"], ["ジ"],
+		[
+			["時", "ジ", ["hour", "o'clock"]],
+			["時", "とき", ["time", "hour", "moment", "occasion"]]
+		]
+	],
+	
+	["月", ["month", "moon"], ["つき"], ["ゲツ"],
+		[
+			["月", "ゲツ", ["monday"]],
+			["月", "つき", ["month", "moon", "moonlight"]]
+		]
+	],
+	
+	["分", ["part", "segment", "degree", "divide", "share"], ["わ.ける", "わ.かつ", "わ.け"], ["ブン"],
+		[
+			["分", "ブン", ["part", "portion", "amount", "share"]],
+			["分け", "わ.け", ["division", "classification", "draw", "tie"]],
+			["分ける ", "わ.ける", ["to divide (into)", "to split (into)", "to classify"]],
+			["分かつ", "わ.かつ", ["to divide", "to share", "to distribute", "to separate"]]
+		]
+	],
 	
 	["魅", ["fascination", "charm", "bewitch"], [], ["ミ"]]
 ]

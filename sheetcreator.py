@@ -30,11 +30,17 @@ def grouper(n, iterable, fillvalue=None):
 
 class KanjiDictionaryEntry(object):
     _word: str
+    _translit: str
     _translations: List[str]
 
-    def __init__(self, word: str, translations: List[str]):
+    def __init__(self, word: str, translit: str, translations: List[str]):
         self._word = word
         self._translations = translations
+        self._translit = translit
+
+    @property
+    def translit(self) -> str:
+        return self._translit
 
     @property
     def word(self) -> str:
@@ -125,8 +131,8 @@ def render_meaning_block(pdf: FPDF, kanji: KanjiData, cell_width: float, cells: 
     pdf.multi_cell(cell_width * cells, cell_width, text=meaningText, border=1, align='C', max_line_height=cell_width/2,
                    new_x=XPos.RIGHT, new_y=YPos.TOP)
 
-def render_dictionary_sub_block(pdf: FPDF, entries: List[KanjiDictionaryEntry], column: int, cell_width: float):
-    originX, originY = pdf.get_x() + (column * (cell_width * 4)), pdf.get_y()
+def render_dictionary_sub_block(pdf: FPDF, entries: List[KanjiDictionaryEntry], row: int, cell_width: float):
+    originX, originY = pdf.get_x(), pdf.get_y()
 
     paddingSize = cell_width / 10
 
@@ -134,20 +140,24 @@ def render_dictionary_sub_block(pdf: FPDF, entries: List[KanjiDictionaryEntry], 
     pdf.set_y(originY + paddingSize)
 
     textLineHeight = cell_width / 4
-    for dictionaryEntry in entries:
+    for i in range(len(entries)):
+        dictionaryEntry = entries[i]
         if dictionaryEntry is None:
             break
 
-        pdf.set_x(originX + paddingSize)
-        pdf.set_font('NotoSansJP', 'B', 8)
-        pdf.cell(cell_width * 3, textLineHeight, border=0, text=dictionaryEntry.word, new_x=XPos.LEFT, new_y=YPos.NEXT)
+        thisX = originX + i*(paddingSize + cell_width * 4)
 
-        pdf.set_x(originX + paddingSize)
+        pdf.set_x(thisX + paddingSize)
+        pdf.set_font('NotoSansJP', 'B', 10)
+        entryText = ("%s【%s】" % (dictionaryEntry.word, dictionaryEntry.translit)) if dictionaryEntry.translit is not None else dictionaryEntry.word
+        pdf.cell(cell_width * 4, textLineHeight, border=0, text=entryText, new_x=XPos.LEFT, new_y=YPos.NEXT)
+
+        pdf.set_x(thisX + paddingSize)
         pdf.set_font('NotoSansJP', '', 8)
         translations = "; ".join(dictionaryEntry.translations)
-        pdf.cell(cell_width * 3, textLineHeight, border=0, text=translations, new_x=XPos.LEFT, new_y=YPos.NEXT)
+        pdf.cell(cell_width * 4, textLineHeight, border=0, text=translations, new_x=XPos.LEFT, new_y=YPos.NEXT)
 
-        pdf.set_y(pdf.get_y() + paddingSize)
+        pdf.set_y(originY + paddingSize)
 
 def render_dictionary_block(pdf: FPDF, kanji: KanjiData, cell_width: float):
     # Remember position of top left corner of dictionary border cell
@@ -155,16 +165,17 @@ def render_dictionary_block(pdf: FPDF, kanji: KanjiData, cell_width: float):
 
     paddingSize = cell_width / 10
     textLineHeight = cell_width / 4
-    height = (min(3, len(kanji.dictionary_entries)) * (2*textLineHeight + paddingSize)) + (2*paddingSize)
+    height = (((len(kanji.dictionary_entries) // 4) + 1) * (2*textLineHeight + paddingSize)) + (2*paddingSize)
 
     # Draw dictionary border cell
     pdf.cell(cell_width * 12, height, border=1)
 
-    # We can fit three columns of three entries each.
-    columns = list(grouper(3, kanji.dictionary_entries))[:3]
-    for i in range(len(columns)):
-        pdf.set_x(oldX), pdf.set_y(oldY)
-        render_dictionary_sub_block(pdf, columns[i], i, cell_width)
+    # We can fit three entries per row
+    rows = list(grouper(3, kanji.dictionary_entries))[:3]
+    for i in range(len(rows)):
+        pdf.set_x(oldX)
+        pdf.set_y(oldY + (i * (2*textLineHeight + paddingSize)))
+        render_dictionary_sub_block(pdf, rows[i], i, cell_width)
 
     # Return to origin of the dictionary block cell so that we can cleanly
     # jump to the end of the block (since the amount of content varies depending on the kanji, but
@@ -181,7 +192,7 @@ def calc_kanji_block_height(kanji: KanjiData, cell_width: float) -> float:
     if StyleOptions.ShowDictionary in style and len(kanji.dictionary_entries) > 0:
         paddingSize = cell_width / 10
         textLineHeight = cell_width / 4
-        additionalHeight = ((2*textLineHeight + paddingSize) * min(len(kanji.dictionary_entries), 3)) + (paddingSize * 2)
+        additionalHeight = (((len(kanji.dictionary_entries) // 4) + 1) * (2*textLineHeight + paddingSize)) + (3*paddingSize)
     else:
         additionalHeight = 0
 
@@ -304,9 +315,13 @@ def parseKanjiDictEntries(dictionaryEntries: List[object]) -> List[KanjiDictiona
 
     for entry in dictionaryEntries:
         try:
-            word, translations = entry
+            if len(entry) == 3:
+                word, translit, translations = entry
+            else:
+                word, translations = entry
+                translit = None
             if len(translations) > 0:
-                dictEntries.append(KanjiDictionaryEntry(word, list(translations)))
+                dictEntries.append(KanjiDictionaryEntry(word, translit, list(translations)))
 
         except Exception as ex:
             print("Failed to parse kanji dictionary entry, skipping: %s" % str(ex))
