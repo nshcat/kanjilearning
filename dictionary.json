@@ -1,0 +1,38 @@
+[
+	["一", ["one"], ["ひと-", "ひと.つ"], ["イチ", "イツ"]],
+	["二", ["two"], ["ふた", "ふた.つ"], ["ニ", "ジ"]],
+	["三", ["three"], ["み", "み.つ"], ["サン", "ゾウ"]],
+	["四", ["four"], ["よ", "よ.つ"], ["シ"]],
+	["五", ["five"], ["いつ"], ["ゴ"]],
+	
+	["本", ["book", "origin", "present", "counter (long cylindrical things)"], ["もと"], ["ホン"]],
+	["日", ["day", "sun", "counter (days)"], ["ニチ", "ジツ"], ["ひ", "-び", "-か"]],
+	["国", ["country"], ["くに"], ["コク"]],
+	["人", ["person"], ["ひと", "-り", "-と"], ["ジン", "ニン"]],
+	["大", ["large", "big"], ["おお.きい"], ["ダイ", "タイ"]],
+	["年", ["year", "counter (years)"], ["とし"], ["ネン"]],
+	["中", ["in", "inside", "center"], ["なか", " あた.る"], ["チュウ"]],
+	["点", ["spot", "point", "counter (score, points)"], [], ["テン"]],
+	["火", ["fire", "flame"], ["ひ", "-び", "ほ-"], ["カ"]],
+	["焚", ["burn"], ["た.く", "や.く"], ["フン", "ホン", "ハン"]],	
+	["出", ["exit", "leave", "come out", "protrude"], ["で.る", "だ.す"], ["シュツ"],
+		[
+			["で.る", ["to leave", "to exit", "to come out"]],
+			["だ.す", ["to take out", "to reveal", "to turn in"]]
+		]
+	],
+	["長", ["long", "leader", "senior"], ["なが.い"], ["チョウ"]],
+	
+	["見", ["see", "hopes", "idea", "look at", "visible"], ["み.る", "み.える", "み.せる"], ["ケン"],
+		[
+			["み.る", ["to see", "to look", "to watch"]],
+			["み.せる", ["to show"]],
+			["み.える", ["to be seen", "to be visible", "to seem"]],
+			["み.せる", ["to show"]],
+			["み.える", ["to be seen", "to be visible", "to seem"]]
+		]
+	],
+	
+	
+	["魅", ["fascination", "charm", "bewitch"], [], ["ミ"]]
+]

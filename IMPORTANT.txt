@@ -1,0 +1,1 @@
+Install fonts for fpdf in site-packages\fpdf2\font
