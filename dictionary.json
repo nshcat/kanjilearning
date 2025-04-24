@@ -111,6 +111,16 @@
 		]
 	],
 	
+	["愛", ["love", "affection", "favourite"], ["いと.しい", "かな.しい", "め.でる"], ["アイ"],
+		[
+			["愛", "アイ", ["love", "affection", "craving", "care", "desire"]],
+			["愛犬", "アイケン", ["pet dog", "beloved dog"]],
+	
+			["愛でる", "め.でる", ["to love", "to cherish", "to appreciate", "to admire"]],
+			["愛しい", "いと.しい", ["lovely", "dear", "beloved"]]
+		]
+	],
+	
 	["分", ["part", "segment", "degree", "divide", "share"], ["わ.ける", "わ.かつ", "わ.け"], ["ブン"],
 		[
 			["分", "ブン", ["part", "portion", "amount", "share"]],

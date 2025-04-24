@@ -9,6 +9,7 @@ import os.path
 from enum import IntFlag
 import romkan
 import argparse
+import PIL
 
 class StyleOptions(IntFlag):
     Nothing = 0x0
@@ -17,9 +18,14 @@ class StyleOptions(IntFlag):
     ShowRegularKanji = 0x4
     CrossGuide = 0x8
     ShowDictionary = 0x10
+    NoHeader = 0x20
+    WritingGuides = 0x40
     
 style: StyleOptions
 style = StyleOptions.Nothing
+
+extra_rows: int
+extra_rows = 0
 
 from itertools import zip_longest
 def grouper(n, iterable, fillvalue=None):
@@ -186,6 +192,12 @@ def render_dictionary_block(pdf: FPDF, kanji: KanjiData, cell_width: float):
 def calc_kanji_block_height(kanji: KanjiData, cell_width: float) -> float:
     baseHeight = (cell_width * 4) if StyleOptions.BigKanji in style else (cell_width * 3)
 
+    if StyleOptions.NoHeader in style:
+        baseHeight -= cell_width
+
+    # Extra rows
+    baseHeight += extra_rows * cell_width
+
     # Spacer between entries
     baseHeight += 0.25*cell_width
 
@@ -201,20 +213,21 @@ def calc_kanji_block_height(kanji: KanjiData, cell_width: float) -> float:
 def render_kanji_block(pdf: FPDF, kanji: KanjiData, cell_width: float):
     pdf.set_font('NotoSansJP', '', 12)
 
-    if StyleOptions.ShowRegularKanji in style:
-        pdf.set_font('NotoSansJP', '', 24)
-        pdf.cell(cell_width * 1, cell_width, text=kanji.symbol, border=1, align='C')
-              
-        pdf.set_font('NotoSansJP', 'B', 12)
-        render_meaning_block(pdf, kanji, cell_width, 5)
-    else: 
-        pdf.set_font('NotoSansJP', 'B', 12)
-        render_meaning_block(pdf, kanji, cell_width, 6)
+    if StyleOptions.NoHeader not in style:
+        if StyleOptions.ShowRegularKanji in style:
+            pdf.set_font('NotoSansJP', '', 24)
+            pdf.cell(cell_width * 1, cell_width, text=kanji.symbol, border=1, align='C')
+                
+            pdf.set_font('NotoSansJP', 'B', 10)
+            render_meaning_block(pdf, kanji, cell_width, 5)
+        else: 
+            pdf.set_font('NotoSansJP', 'B', 10)
+            render_meaning_block(pdf, kanji, cell_width, 6)
 
-    pdf.set_font('NotoSansJP', 'B', 12)
-    render_readings(pdf, cell_width, kanji.on_readings)
-    render_readings(pdf, cell_width, kanji.kun_readings)
-    pdf.ln(cell_width)
+        pdf.set_font('NotoSansJP', 'B', 10)
+        render_readings(pdf, cell_width, kanji.on_readings)
+        render_readings(pdf, cell_width, kanji.kun_readings)
+        pdf.ln(cell_width)
 
     kanjiBlockSize = 3 if StyleOptions.BigKanji in style else 2
 
@@ -223,15 +236,31 @@ def render_kanji_block(pdf: FPDF, kanji: KanjiData, cell_width: float):
     stroke_path = os.path.join(os.getcwd(), "kanji", kanji.stroke_diagram_file + ".png")
 
     if os.path.exists(stroke_path):
+        has_stroke_image = True
         pdf.image(name=stroke_path, x=pdf.x, y=pdf.y, w=cell_width*kanjiBlockSize, h=cell_width*kanjiBlockSize, keep_aspect_ratio=True)
     else:
+        has_stroke_image = False
         pdf.cell(cell_width*kanjiBlockSize, cell_width*kanjiBlockSize, border=1)
 
     numWriteCellsInX = 9 if StyleOptions.BigKanji in style else 10
 
+    if StyleOptions.WritingGuides in style and has_stroke_image:
+        # This makes all opaque pixels slightly transparent,
+        # but leaves the completely transparent background alone
+        guide_image = PIL.Image.open(stroke_path)
+        im2 = guide_image.copy()
+        im2.putalpha(96)
+        guide_image.paste(im2, guide_image)
+
     pdf.set_x(cell_width*(kanjiBlockSize + 0.5))
-    for _ in range(numWriteCellsInX):
+    for idx in range(numWriteCellsInX):
         render_write_cell(pdf, cell_width)
+        afterCellX = pdf.get_x()
+
+        if StyleOptions.WritingGuides in style and has_stroke_image and idx <= 3:
+            pdf.set_x(afterCellX - cell_width)
+            pdf.image(name=guide_image, x=pdf.x, y=pdf.y, w=cell_width, h=cell_width, keep_aspect_ratio=True)
+            pdf.set_x(afterCellX)
 
     pdf.ln(cell_width)
     pdf.set_x(cell_width*(kanjiBlockSize + 0.5))
@@ -245,6 +274,13 @@ def render_kanji_block(pdf: FPDF, kanji: KanjiData, cell_width: float):
         for _ in range(numWriteCellsInX):
             render_write_cell(pdf, cell_width)
 
+    # Render extra rows
+    numCellsInFullRow = 12
+    for _ in range(extra_rows):
+        pdf.ln(cell_width)
+        pdf.set_x(cell_width * 0.5)
+        for _ in range(numCellsInFullRow):
+            render_write_cell(pdf, cell_width)
 
     if StyleOptions.ShowDictionary in style and len(kanji.dictionary_entries) > 0:
         pdf.ln(cell_width)
@@ -272,6 +308,8 @@ def renderDocument(kanjis: List[KanjiData], path: str) -> None:
     pdf.add_font('NotoSansJP', '', 'NotoSansJP-Regular.ttf')
     pdf.add_font('NotoSansJP', 'B', 'NotoSansJP-Bold.ttf')
     pdf.set_font('NotoSansJP', '', 14)
+
+    pdf.set_auto_page_break(True, 10.0)
 
     # 5 Kanjis per page
     cell_width = (pdf.w / 13) # Padded on left and right by a half cell
@@ -328,6 +366,7 @@ def parseKanjiDictEntries(dictionaryEntries: List[object]) -> List[KanjiDictiona
             continue
 
     return dictEntries
+
 def lookupKanjiSymbolsDict(dictionaryPath: str, kanjiSyms: List[str]) -> List[KanjiData]:
     kanjiDict : Dict[str, KanjiData]
     kanjiDict = {}
@@ -409,7 +448,13 @@ if __name__ == "__main__":
     parser.add_argument("-K", "--show-kanji", help="enable non-stylized kanji in addition to stroke diagram", action="store_true")
     parser.add_argument("-C", "--cross-guide", help="enable cross writing guide in kanji boxes", action="store_true")
     parser.add_argument("-D", "--show-dictionary", help="enable dictionary display", action="store_true")
+    parser.add_argument("-N", "--no-header", help="disable kanji block header", action="store_true")
+    parser.add_argument("-G", "--writing-guides", help="enable partly transparent writing guides", action="store_true")
+
+    parser.add_argument("-R", "--extra-rows", help="number of extra practice rows to add for each kanji", type=int, default=0)
     args = parser.parse_args()
+
+    extra_rows = args.extra_rows
 
     if args.big_kanji:
         style |= StyleOptions.BigKanji
@@ -422,6 +467,12 @@ if __name__ == "__main__":
 
     if args.show_dictionary:
         style |= StyleOptions.ShowDictionary
+
+    if args.no_header:
+        style |= StyleOptions.NoHeader
+
+    if args.writing_guides:
+        style |= StyleOptions.WritingGuides
 
     kanjiSyms: List[str]
     kanjiSyms = None
